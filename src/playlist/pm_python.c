@@ -1,6 +1,6 @@
 /* playlist_python.c
  * - Interpreter functions for python
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander HavÃ¤ng
  * Copyright (c) 2001-3 Brendan Cully
  *
  * This program is free software; you can redistribute it and/or
@@ -49,6 +49,12 @@ static int python_setup_path(void);
 static PyObject* python_eval(char *functionname);
 static char* python_find_attr(PyObject* module, char* f1, char* f2);
 
+/* python 2 to 3 compatibility wrappers*/
+int ices_PyInt_Check(PyObject* pyObj);
+long ices_PyAsLong(PyObject* pyObj);
+int ices_PyString_Check(PyObject* pyObj);
+char* ices_PyAsString(PyObject* pyObj);
+
 /* Call python function to initialize the python script */
 int ices_playlist_python_initialize(playlist_module_t* pm) {
 	PyObject* res;
@@ -64,8 +70,8 @@ int ices_playlist_python_initialize(playlist_module_t* pm) {
 		return -1;
 
 	if (pl_init_hook) {
-		if ((res = python_eval(pl_init_hook)) && PyInt_Check(res))
-			rc = PyInt_AsLong(res);
+		if ((res = python_eval(pl_init_hook)) && ices_PyInt_Check(res))
+			rc = ices_PyAsLong(res);
 		else
 			ices_log_error("ices_init failed");
 
@@ -81,8 +87,8 @@ static int playlist_python_get_lineno(void) {
 	int rc = 0;
 
 	if (pl_get_lineno_hook) {
-		if ((res = python_eval(pl_get_lineno_hook)) && PyInt_Check(res))
-			rc = PyInt_AsLong(res);
+		if ((res = python_eval(pl_get_lineno_hook)) && ices_PyInt_Check(res))
+			rc = ices_PyAsLong(res);
 		else
 			ices_log_error("ices_get_lineno failed");
 
@@ -97,8 +103,8 @@ static char *playlist_python_get_next(void) {
 	PyObject* res;
 	char* rc = NULL;
 
-	if ((res = python_eval(pl_get_next_hook)) && PyString_Check(res))
-		rc = ices_util_strdup(PyString_AsString(res));
+	if ((res = python_eval(pl_get_next_hook)) && ices_PyString_Check(res))
+		rc = ices_util_strdup(ices_PyAsString(res));
 	else
 		ices_log_error("ices_get_next failed");
 
@@ -112,8 +118,8 @@ static char*playlist_python_get_metadata(void) {
 	char* rc = NULL;
 
 	if (pl_get_metadata_hook) {
-		if ((res = python_eval(pl_get_metadata_hook)) && PyString_Check(res))
-			rc = ices_util_strdup(PyString_AsString(res));
+		if ((res = python_eval(pl_get_metadata_hook)) && ices_PyString_Check(res))
+			rc = ices_util_strdup(ices_PyAsString(res));
 		else
 			ices_log_error("ices_get_metadata failed");
 
@@ -145,7 +151,7 @@ static void playlist_python_shutdown(void) {
 	PyObject* res;
 
 	if (pl_shutdown_hook) {
-		if (!((res = python_eval(pl_shutdown_hook)) && PyInt_Check(res)))
+		if (!((res = python_eval(pl_shutdown_hook)) && ices_PyInt_Check(res)))
 			ices_log_error("ices_shutdown failed");
 
 		Py_XDECREF(res);
@@ -247,4 +253,36 @@ static char*python_find_attr(PyObject* module, char* f1, char* f2) {
 		ices_log_debug("Found method: %s", rc);
 
 	return rc;
+}
+
+int ices_PyInt_Check(PyObject* pyObj) {
+	#if PY_MAJOR_VERSION >= 3
+		return PyLong_Check(pyObj);
+	#else 
+		return PyInt_Check(pyObj);
+	#endif
+}
+
+long ices_PyAsLong(PyObject* pyObj) {
+	#if PY_MAJOR_VERSION >= 3
+		return PyLong_AsLong(pyObj);
+	#else 
+		return PyInt_AsLong(pyObj);
+	#endif
+}
+
+int ices_PyString_Check(PyObject* pyObj) {
+	#if PY_MAJOR_VERSION >= 3
+		return PyUnicode_Check(pyObj);
+	#else 
+		return PyString_Check(pyObj);
+	#endif	
+}
+
+char* ices_PyAsString(PyObject* pyObj) {
+	#if PY_MAJOR_VERSION >= 3
+		return PyUnicode_AsUTF8(pyObj);
+	#else 
+		return PyString_AsString(pyObj);
+	#endif	
 }

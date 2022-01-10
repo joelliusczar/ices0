@@ -26,6 +26,7 @@ autom4te.cache
 /install-sh
 /missing
 /stamp-h1
+configure~
 
 # https://www.gnu.org/software/libtool/
 
@@ -48,3 +49,12 @@ m4/lt~obsolete.m4
 # can automatically generate from config.status script
 # (which is called by configure script))
 Makefile
+config.h
+*.Po
+conf/ices.conf.dist
+
+# build files
+libtool
+*.o
+*.a
+ices
