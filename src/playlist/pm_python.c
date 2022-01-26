@@ -170,7 +170,7 @@ static int python_init(void) {
 		return -1;
 
 	Py_Initialize();
-
+	ices_log_debug("Python version: %d", PY_MAJOR_VERSION);
 	ices_log_debug("Importing %s.py module...", ices_config.pm.module);
 
 	/* Call the python api code to import the module */
