@@ -102,7 +102,7 @@ static int playlist_python_get_lineno(void) {
 static char *playlist_python_get_next(void) {
 	PyObject* res;
 	char* rc = NULL;
-
+	ices_log_debug("getting next");
 	if ((res = python_eval(pl_get_next_hook)) && ices_PyString_Check(res))
 		rc = ices_util_strdup(ices_PyAsString(res));
 	else
@@ -179,7 +179,7 @@ static int python_init(void) {
 		PyErr_Print();
 		return -1;
 	}
-
+	ices_log_debug("module imported");
 	/* Find defined methods */
 	pl_init_hook = python_find_attr(python_module, "ices_init",
 					"ices_python_initialize");
@@ -197,6 +197,7 @@ static int python_init(void) {
 		return -1;
 	}
 
+	ices_log_debug("finished initializing");
 	return 0;
 }
 
@@ -242,10 +243,14 @@ static PyObject*python_eval(char *functionname) {
 static char*python_find_attr(PyObject* module, char* f1, char* f2) {
 	char* rc;
 
-	if (PyObject_HasAttrString(module, f1))
+	if (PyObject_HasAttrString(module, f1)) {
+		ices_log_debug("looking for attr string 1: %s", f1);
 		rc = f1;
-	else if (PyObject_HasAttrString(module, f2))
+	}
+	else if (PyObject_HasAttrString(module, f2)) {
+		ices_log_debug("looking for attr string 2: %s", f2);
 		rc = f2;
+	}
 	else
 		rc = NULL;
 
