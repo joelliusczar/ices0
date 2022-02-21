@@ -55,7 +55,7 @@ then
   ac_save_LIBS="$LIBS"
   CPPFLAGS="$CPPFLAGS $SHOUT_CPPFLAGS"
   CFLAGS="$CFLAGS $SHOUT_CFLAGS"
-  LIBS="$SHOUT_LIBS $LIBS -lvorbis"
+  LIBS="$SHOUT_LIBS $LIBS"
   AC_CHECK_HEADERS([shout/shout.h], [
     AC_CHECK_FUNC([shout_new], [
       ifelse([$1], , :, [$1])
