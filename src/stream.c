@@ -162,13 +162,13 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 	int samples;
 	int rc;
 	int do_sleep;
+	/* worst case decode: 22050 Hz at 8kbs = 44.1 samples/byte */
+	static int16_t left[INPUT_BUFSIZ * 45];
+	static int16_t right[INPUT_BUFSIZ * 45];
 #ifdef HAVE_LIBLAME
 	int decode = 0;
 	buffer_t obuf;
 	ices_plugin_t *plugin;
-	/* worst case decode: 22050 Hz at 8kbs = 44.1 samples/byte */
-	static int16_t left[INPUT_BUFSIZ * 45];
-	static int16_t right[INPUT_BUFSIZ * 45];
 	static int16_t* rightp;
 #endif
 
