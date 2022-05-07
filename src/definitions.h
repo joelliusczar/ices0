@@ -135,5 +135,7 @@ double rg_get_track_gain(void);
 #define ICES_DEFAULT_VERBOSE 0
 #define ICES_DEFAULT_REENCODE 0
 #define ICES_DEFAULT_CUEFILE 0
+#define ICES_EXIT_SUCCESS 0
+#define ICES_EXIT_FAILURE 1
 
 #endif

@@ -1,6 +1,6 @@
 /* signals.c
  * - Functions for signal handling in ices
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -86,7 +86,7 @@ static RETSIGTYPE signals_child(const int sig) {
 /* SIGINT, ok, let's be nice and just drop dead */
 static RETSIGTYPE signals_int(const int sig) {
 	ices_log_debug("Caught signal, shutting down...");
-	ices_setup_shutdown();
+	ices_setup_shutdown(EXIT_SUCCESS);
 }
 
 /* SIGHUP caught, let's cycle logfiles and try to reload the playlist module */

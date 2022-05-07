@@ -1,6 +1,6 @@
 /* setup.h
  * - initialization function declarations for ices
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
 
 /* Public function declarations */
 void ices_setup_initialize(void);
-void ices_setup_shutdown(void);
+void ices_setup_shutdown(int exitCode);
 
 /* exported for the config parser */
 void ices_setup_parse_stream_defaults(ices_stream_t*);

@@ -1,6 +1,6 @@
 /* playlist.c
  * - Functions for playlist handling
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  * Copyright (c) 2001-2 Brendan Cully
  *
  * This program is free software; you can redistribute it and/or
@@ -99,7 +99,7 @@ int ices_playlist_initialize(void) {
 
 	if (rc < 0) {
 		ices_log("Initialization of playlist handler failed. [%s]", ices_log_get_error());
-		ices_setup_shutdown();
+		ices_setup_shutdown(ICES_EXIT_FAILURE);
 	}
 
 	playlist_init = 1;

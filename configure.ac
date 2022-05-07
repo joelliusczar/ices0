@@ -2,8 +2,8 @@
 # $Id: configure.ac 8764 2005-01-16 18:47:32Z brendan $
 
 m4_define(ICES_MAJOR, 0)
-m4_define(ICES_MINOR, 4)
-m4_define(ICES_MICRO, 11)
+m4_define(ICES_MINOR, 5)
+m4_define(ICES_MICRO, 0)
 m4_define(ICES_VERSION,
   m4_if(ICES_MICRO, 0, ICES_MAJOR.ICES_MINOR, ICES_MAJOR.ICES_MINOR.ICES_MICRO))
 

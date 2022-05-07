@@ -66,7 +66,7 @@ void ices_setup_initialize(void) {
 	for (stream = ices_config.streams; stream; stream = stream->next) {
 		if (!(stream->conn = shout_new())) {
 			ices_log("Could not create shout interface");
-			ices_setup_shutdown();
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
 	}
 
@@ -92,7 +92,7 @@ void ices_setup_initialize(void) {
 
 /* Top level ices shutdown function.
  * This is the _only_ way out of here */
-void ices_setup_shutdown(void) {
+void ices_setup_shutdown(int exitCode) {
 	ices_stream_t* stream;
 	ices_plugin_t* plugin;
 
@@ -129,7 +129,7 @@ void ices_setup_shutdown(void) {
 	shout_shutdown();
 
 	/* Down and down we go... */
-	exit(1);
+	exit(exitCode);
 }
 
 /* Local function definitions */
@@ -288,7 +288,7 @@ static void ices_setup_parse_command_line_for_new_configfile(ices_config_t *ices
 				ices_config->configfile = ices_util_strdup(argv[arg]);
 #ifndef HAVE_LIBXML
 				fprintf(stderr, "Cannot use config file (no XML support).\n");
-				ices_setup_shutdown();
+				ices_setup_shutdown(ICES_EXIT_FAILURE);
 #endif
 				break;
 			}
@@ -316,7 +316,7 @@ static void ices_setup_parse_command_line(ices_config_t *ices_config, char **arg
 			if ((strchr("BRrsVvQ", s[1]) == NULL) && arg >= (argc - 1)) {
 				fprintf(stderr, "Option %c requires an argument!\n", s[1]);
 				ices_setup_usage();
-				ices_setup_shutdown();
+				ices_setup_shutdown(ICES_EXIT_FAILURE);
 				return;
 			}
 
@@ -413,7 +413,7 @@ static void ices_setup_parse_command_line(ices_config_t *ices_config, char **arg
 				stream->reencode = 1;
 #else
 				fprintf(stderr, "This ices wasn't compiled with reencoding support\n");
-				ices_setup_shutdown();
+				ices_setup_shutdown(ICES_EXIT_FAILURE);
 #endif
 				break;
 			case 'r':
@@ -443,7 +443,7 @@ static void ices_setup_parse_command_line(ices_config_t *ices_config, char **arg
 					stream->protocol = icy_protocol_e;
 				else {
 					fprintf(stderr, "Unknown protocol %s. Use 'http', 'xaudiocast' or 'icy'.\n", argv[arg]);
-					ices_setup_shutdown();
+					ices_setup_shutdown(ICES_EXIT_FAILURE);
 				}
 				break;
 			case 'U':
@@ -606,7 +606,7 @@ static void ices_setup_daemonize(void) {
 		/* Update the pidfile (so external applications know what pid
 		   ices is running with. */
 		printf("Into the land of the dreaded daemons we go... (pid: %d)\n", icespid);
-		ices_setup_shutdown();
+		ices_setup_shutdown(ICES_EXIT_SUCCESS);
 	}
 #ifdef HAVE_SETSID
 	setsid();

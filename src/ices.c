@@ -1,6 +1,6 @@
 /* ices.c
  * - Main Program *
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +24,7 @@ ices_config_t ices_config;
 
 /* Global function definitions */
 
-/* Ices starts here. But ends in ices_setup_shutdown(),
+/* Ices starts here. But ends in ices_setup_shutdown(exitCode),
  * which calls exit(0) and that's the last you see of it. */
 int main(int argc, char **argv) {
 	/* Make command line arguments available through

@@ -1,6 +1,6 @@
 /* reencode.c
  * - Functions for reencoding in ices
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  * Copyright (c) 2001-3 Brendan Cully
  *
  * This program is free software; you can redistribute it and/or
@@ -60,7 +60,7 @@ void ices_reencode_reset(input_stream_t* source) {
 	if (!init_decoder) {
 		if (lame_decode_exit() < 0) {
 			ices_log("LAME: error shutting down decoder");
-			ices_setup_shutdown();
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
 		init_decoder = 1;
 	}
@@ -69,7 +69,7 @@ void ices_reencode_reset(input_stream_t* source) {
 	if (init_decoder) {
 		if (lame_decode_init() < 0) {
 			ices_log("LAME: error initialising decoder");
-			ices_setup_shutdown();
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
 		init_decoder = 0;
 	}
@@ -89,7 +89,7 @@ void ices_reencode_reset(input_stream_t* source) {
 
 		if (!(stream->encoder_state = lame_init())) {
 			ices_log("LAME: error resetting encoder.");
-			ices_setup_shutdown();
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
 
 		lame = (lame_global_flags*) stream->encoder_state;
@@ -111,7 +111,7 @@ void ices_reencode_reset(input_stream_t* source) {
 		if (lame_init_params(lame) < 0) {
 			ices_log("LAME: error resetting sample rate.");
 			lame_close(lame);
-			ices_setup_shutdown();
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
 
 		/* adjust default stream sample rate to LAME default for lazy reencoding tests */

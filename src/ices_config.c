@@ -176,7 +176,7 @@ static void parse_stream_node(xmlDocPtr doc, xmlNsPtr ns, xmlNodePtr cur,
 #ifndef HAVE_LIBLAME
 			if (res == 1) {
 				ices_log("Support for reencoding with liblame was not found. You can't reencode this.");
-				ices_setup_shutdown();
+				ices_setup_shutdown(ICES_EXIT_FAILURE);
 			}
 #endif
 

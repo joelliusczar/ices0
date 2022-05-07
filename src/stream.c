@@ -86,7 +86,7 @@ void ices_stream_loop(ices_config_t* config) {
 
 		if (!(source.path && source.path[0])) {
 			ices_log("Playlist handler returned an empty file name; no media to play, shutting down.");
-			ices_setup_shutdown();
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
 
 		ices_cue_set_lineno(ices_playlist_get_current_lineno());
@@ -100,7 +100,7 @@ void ices_stream_loop(ices_config_t* config) {
 		if (consecutive_errors > 10) {
 			ices_log("Exiting after 10 consecutive errors.");
 			ices_util_free(source.path);
-			ices_setup_shutdown();
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
 
 		if (stream_open_source(&source) < 0) {
@@ -303,7 +303,7 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 				if (rc < 0) {
 					if (stream->errs > 10) {
 						ices_log("Too many stream errors, giving up");
-						ices_setup_shutdown();
+						ices_setup_shutdown(ICES_EXIT_FAILURE);
 					}
 					ices_log("Error during send: %s", ices_log_get_error());
 				} else

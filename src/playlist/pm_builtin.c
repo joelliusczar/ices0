@@ -51,7 +51,7 @@ int ices_playlist_builtin_initialize(playlist_module_t* pm) {
 
 	if (!playlist_builtin_open_playlist(pm)) {
 		ices_log("Could not find a valid playlist file.");
-		ices_setup_shutdown();
+		ices_setup_shutdown(ICES_EXIT_FAILURE);
 		return -1;
 	}
 
