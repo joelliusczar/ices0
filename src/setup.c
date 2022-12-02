@@ -612,7 +612,6 @@ static void ices_setup_daemonize(void) {
 	setsid();
 #endif
 
-	ices_log_daemonize();
 	ices_setup_update_pidfile(getpid());
 }
 

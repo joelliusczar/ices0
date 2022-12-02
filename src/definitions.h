@@ -85,6 +85,10 @@
 #include <fcntl.h>
 #endif
 
+#if defined(HAVE_UNISTD_H) && !defined(_WIN32) && defined(S_ISFIFO)
+#define REDIRECT_LOGGING 1
+#endif
+
 /* This has all the datatypes */
 #include "icestypes.h"
 
