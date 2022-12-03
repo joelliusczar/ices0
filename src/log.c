@@ -62,8 +62,9 @@ void ices_log_shutdown(void) {
  * run as a daemon */
 void ices_log_daemonize(void) {
 	freopen("/dev/null", "r", stdin);
-//#ifdef REDIRECT_LOGGING
-	char namespace[LOG_FILENAME_LEN];
+#ifdef REDIRECT_LOGGING
+	char namespace[LOG_FILENAME_LEN], buf[ERR_BUFF_LEN];
+
 	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN) != 1) {
 		return;
 	}
@@ -86,7 +87,7 @@ void ices_log_daemonize(void) {
 	if (!logfp) {
 		ices_log_error("Error while opening %s, error: %s", namespace,
 			ices_util_strerror(errno, buf, ERR_BUFF_LEN));
-		return 0;
+		return;
 	}
 	//redirect stderr into stdout so that it also goes to the log file
 	int res = dup2(fileno(logfp), fileno(stderr));
@@ -95,13 +96,13 @@ void ices_log_daemonize(void) {
 	}
 	ices_config.logfile = logfp;
 
-//#else
+#else
 
 	freopen("/dev/null", "w", stdout);
 	freopen("/dev/null", "w", stderr);
 
 	ices_log_reopen_logfile();
-//#endif
+#endif
 }
 
 /* Cycle the logfile, usually called from the SIGHUP handler */
@@ -191,7 +192,7 @@ int ices_setup_output_redirects(void) {
 #ifdef REDIRECT_LOGGING
 	char namespace[LOG_FILENAME_LEN];
 	int cmdLen = 9;
-	char cmd[LOG_FILENAME_LEN + cmdLen]
+	char cmd[LOG_FILENAME_LEN + cmdLen];
 	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN) != 1) {
 		return 0;
 	}
