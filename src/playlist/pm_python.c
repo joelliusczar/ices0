@@ -169,9 +169,12 @@ static int python_init(void) {
 	if (python_setup_path() < 0)
 		return -1;
 
-	Py_Initialize();
 	ices_log_debug("Python version: %d", PY_MAJOR_VERSION);
 	ices_log_debug("Importing %s.py module...", ices_config.pm.module);
+	Py_Initialize();
+	PyRun_SimpleString("import sys");
+	//reopen stdout to be line buffered rather than block buffered
+	PyRun_SimpleString("sys.stdout = open(1, mode='w', buffering=1)");
 
 	/* Call the python api code to import the module */
 	if (!(python_module = PyImport_ImportModule(ices_config.pm.module))) {

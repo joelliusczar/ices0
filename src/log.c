@@ -70,19 +70,9 @@ void ices_log_daemonize(void) {
 	}
 	fflush(stdout);
 	FILE *logfp = freopen(namespace,"a",stdout);
-	if(ices_config.logfile) {
-		struct stat finfo;
-		if(fstat(fileno(ices_config.logfile), &finfo) != -1) {
-			if(S_ISFIFO(finfo.st_mode)) {
-					pclose(ices_config.logfile);
-			}
-			else {
-				fclose(ices_config.logfile);
-			}
-			ices_config.logfile = NULL;
-
-		}
-	}
+	setvbuf(logfp, NULL, _IOLBF, 0);
+	//close any previously open files
+	ices_log_close_logfile();
 
 	if (!logfp) {
 		ices_log_error("Error while opening %s, error: %s", namespace,
@@ -270,9 +260,36 @@ static int ices_log_open_logfile(void) {
 
 /* Close ices' logfile */
 static int ices_log_close_logfile(void) {
+#ifdef REDIRECT_LOGGING
+	if(ices_config.logfile) {
+		struct stat finfo;
+		if(fstat(fileno(ices_config.logfile), &finfo) != -1) {
+			if(S_ISFIFO(finfo.st_mode)) {
+					if(ices_config.daemon) {
+						freopen("/dev/null","w",stdout);
+						freopen("/dev/null","w",stderr);
+					}
+					else {
+						//redirecting output to back to their proper places
+						freopen("/dev/tty","w",stdout);
+						freopen("/dev/tty","w",stderr);
+					}
+					ices_log("closing pipe");
+					pclose(ices_config.logfile);
+			}
+			else {
+				ices_log("closing file");
+				fclose(ices_config.logfile);
+			}
+			ices_config.logfile = NULL;
+
+		}
+	}
+#else
 	if (ices_config.logfile)
 		ices_util_fclose(ices_config.logfile);
 
+#endif
 	return 1;
 }
 
