@@ -186,6 +186,8 @@ int ices_setup_output_redirects(void) {
 	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN) != 1) {
 		return 0;
 	}
+	//protect against injections
+	ices_util_scrub_string(namespace, LOG_FILENAME_LEN, "'&|;", 4);
 	//invoke the system command to send output to log file and terminal
 	sprintf(cmd, "tee -a '%s'", namespace);
 	FILE* pipe = popen(cmd, "w");

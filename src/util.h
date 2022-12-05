@@ -1,6 +1,6 @@
 /* util.h
  * - utility function declarations for ices
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -43,3 +43,4 @@ char *ices_util_file_time(unsigned int bitrate, unsigned int filesize,
 const char *ices_util_strerror(int error, char *namespace, int maxsize);
 void ices_util_free(void *ptr);
 int ices_util_verify_file(const char *filename);
+void ices_util_scrub_string(char *input, int inputLen, char *scrub, int scrubLen);

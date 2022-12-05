@@ -289,3 +289,23 @@ int ices_util_verify_file(const char *filename) {
 
 	return 1;
 }
+
+void ices_util_scrub_string(char *input, int inputLen, char *scrub, int scrubLen) {
+	int cp = 0;
+	int i = 0;
+	for(; i < inputLen && input[i] != '\0'; i++) {
+		int found = 0;
+		for(int j = 0; j < scrubLen; j++) {
+			if(input[i] == scrub[j]) {
+				found = 1;
+				break;
+			}
+		}
+		if(!found) {
+			char tmp = input[i];
+			input[cp] = tmp;
+			cp++;
+		}
+	}
+	input[cp] = '\0';
+}
