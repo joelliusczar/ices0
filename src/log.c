@@ -70,6 +70,8 @@ void ices_log_daemonize(void) {
 	}
 	fflush(stdout);
 	FILE *logfp = freopen(namespace,"a",stdout);
+	//by default out to file for python modules is block buffered, but we want line buffered
+	//change output mode to line buffered
 	setvbuf(logfp, NULL, _IOLBF, 0);
 	//close any previously open files
 	ices_log_close_logfile();
@@ -85,6 +87,8 @@ void ices_log_daemonize(void) {
 		ices_log("can't redirect stderr to pipe");
 	}
 	ices_config.logfile = logfp;
+	//for redirect, we don't want to close stdout or stderr because we want to output
+	//from modules to go into the log file
 
 #else
 
@@ -265,6 +269,7 @@ static int ices_log_close_logfile(void) {
 #ifdef REDIRECT_LOGGING
 	if(ices_config.logfile) {
 		struct stat finfo;
+		//check if file is a named pipe
 		if(fstat(fileno(ices_config.logfile), &finfo) != -1) {
 			if(S_ISFIFO(finfo.st_mode)) {
 					if(ices_config.daemon) {
