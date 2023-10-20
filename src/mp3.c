@@ -1,6 +1,6 @@
 /* mp3.c
  * - Functions for mp3 in ices
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  * Copyright (c) 2001-3 Brendan Cully
  *
  * This program is free software; you can redistribute it and/or
@@ -300,8 +300,10 @@ static int ices_mp3_close(input_stream_t* self) {
 
 	ices_util_free(mp3_data->buf);
 	free(self->data);
-
-	return close(self->fd);
+	if (self->fd > 0) {
+		return close(self->fd);
+	}
+	return 0;
 }
 
 /* trim short frame from end of file if necessary */
