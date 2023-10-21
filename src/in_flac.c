@@ -225,7 +225,7 @@ flac_read_cb(const FLAC__StreamDecoder* decoder, FLAC__byte buffer[],
         }
 
         if (flac_data->len < chunksz)
-                chunksz = flac_data->len
+                chunksz = flac_data->len;
                 *bytes = flac_data->len;
         memcpy(buffer, flac_data->buf, chunksz); //in normal case, this should copy 0 bytes
         flac_data->len -= chunksz;
