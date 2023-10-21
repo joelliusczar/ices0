@@ -82,7 +82,7 @@ void ices_id3v1_parse(input_stream_t* source) {
 	char title[31];
 	int i, decodedlen;
 
-	if (!source->filesize)
+	if (!source->filesize || source->fd == 0)
 		return;
 
 	buffer[30] = '\0';

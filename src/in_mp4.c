@@ -65,7 +65,7 @@ int ices_mp4_open(input_stream_t* self, char* buf, size_t len) {
 
 
 	/* At the moment we can only open seekable streams */
-	if (!self->filesize)
+	if (!self->filesize || self->stdinctrl)
 		return 1;
 
 	// if ((mp4file = MP4Read(self->path, 0)) != MP4_INVALID_FILE_HANDLE)

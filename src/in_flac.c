@@ -204,24 +204,31 @@ flac_read_cb(const FLAC__StreamDecoder* decoder, FLAC__byte buffer[],
         flac_in_t* flac_data = (flac_in_t*)self->data;
         ssize_t len;
         char errbuf[128];
+        unsigned int chunksz = *bytes;
+        if (self->stdinctrl && ((self->filesize - self->bytes_read) < chunksz)) {
+                chunksz = self->filesize - self->bytes_read;
+        }
 
-        if (!flac_data->len) {
+        if (!flac_data->len) { //if contents of initial read have not been fully processed yet
                 if (!flac_data->parsed) {
                         *bytes = 0;
                         return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
                 }
-                if ((len = read(self->fd, buffer, *bytes)) > 0)
+                if ((len = read(self->fd, buffer, chunksz)) > 0) {
+                        self->bytes_read += len;
                         return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
+                }
                 if (!len)
                         return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
                 ices_log_error("Error reading FLAC stream: %s", ices_util_strerror(errno, errbuf, sizeof(errbuf)));
                 return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
         }
 
-        if (flac_data->len < *bytes)
+        if (flac_data->len < chunksz)
+                chunksz = flac_data->len
                 *bytes = flac_data->len;
-        memcpy(buffer, flac_data->buf, *bytes);
-        flac_data->len -= *bytes;
+        memcpy(buffer, flac_data->buf, chunksz); //in normal case, this should copy 0 bytes
+        flac_data->len -= chunksz;
 
         return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
 }

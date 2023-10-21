@@ -92,6 +92,7 @@ typedef struct _input_stream_t {
 	char* path;
 	time_t interrupttime;
 	int fd;
+	int stdinctrl;
 	size_t filesize;
 	size_t bytes_read;
 	unsigned int bitrate;

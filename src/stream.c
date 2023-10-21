@@ -68,6 +68,7 @@ static int stream_send(ices_config_t* config, input_stream_t* source);
 static int stream_send_data(ices_stream_t* stream, unsigned char* buf, size_t len);
 static int stream_open_source(input_stream_t* source);
 static int stream_needs_reencoding(input_stream_t* source, ices_stream_t* stream);
+static size_t stream_convert_recived_size(unsigned char* buf, size_t len);
 
 /* Public function definitions */
 
@@ -159,6 +160,7 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 	char namespace[1024];
 	ssize_t len;
 	ssize_t olen;
+	ssize_t chunksize = INPUT_BUFSIZ;
 	int samples;
 	int rc;
 	int do_sleep;
@@ -211,7 +213,7 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 		len = samples = 0;
 		/* fetch input buffer */
 		if (source->read) {
-			len = source->read(source, ibuf, sizeof(ibuf));
+			len = source->read(source, ibuf, chunksize);
 #ifdef HAVE_LIBLAME
 			if (decode) {
 				samples = ices_reencode_decode(ibuf, len, sizeof(left), left, right);
@@ -220,14 +222,14 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 					goto err;
 				}
 			}
-
+#endif
 		} else if (source->readpcm) {
 			len = samples = source->readpcm(source, sizeof(left), left, right);
 			if (samples < 0) {
 				ices_log_debug("source->readpcm returned %d samples!", samples);
 				goto err;
 			}
-#endif
+
     }
 
 	if (samples > 0) {
@@ -245,6 +247,10 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 			if (samples > 0)
 				samples = plugin->process(samples, left, right);
 #endif
+
+		if (source->stdinctrl && ((source->filesize - source->bytes_read) < INPUT_BUFSIZ)) {
+			
+		}
 
 		if (len == 0) {
 			ices_log_debug("Done sending");
@@ -353,13 +359,17 @@ static int stream_open_source(input_stream_t* source) {
 	int fd;
 	int rc;
 
+	source->stdinctrl = 0;
 	source->filesize = 0;
 	source->bytes_read = 0;
 	source->channels = 2;
 
-	if (source->path[0] == '-' && source->path[1] == '\0') {
+	if ((source->path[0] == '-' || source->path[0] == '>') && source->path[1] == '\0') {
 		ices_log_debug("Reading audio from stdin");
 		fd = 0;
+		if (source->path[0] == '>') {
+			source->stdinctrl = 1;
+		}
 	} else if ((fd = open(source->path, O_RDONLY)) < 0) {
 		ices_util_strerror(errno, buf, sizeof(buf));
 		ices_log_error("Error opening: %s", buf);
@@ -379,6 +389,20 @@ static int stream_open_source(input_stream_t* source) {
 	if ((rc = lseek(fd, 0, SEEK_END)) >= 0) {
 		source->filesize = rc;
 		lseek(fd, 0, SEEK_SET);
+	}
+
+	if (source->stdinctrl) {
+		int sizeFrameLen = 4;
+		char sizebuf[sizeFrameLen];
+		if ((len = read(fd, sizebuf, sizeof(sizebuf))) < sizeFrameLen) {
+			ices_util_strerror(errno, buf, sizeof(buf));
+			ices_log_error("Error reading size: %d", len);
+
+			close(fd);
+			return -1;
+		}
+
+		source->filesize = stream_convert_recived_size(sizebuf, sizeFrameLen);
 	}
 
 	if ((len = read(fd, buf, sizeof(buf))) <= 0) {
@@ -483,4 +507,12 @@ static int stream_needs_reencoding(input_stream_t* source, ices_stream_t* stream
 		return 1;
 
 	return 0;
+}
+
+static size_t stream_convert_recived_size(unsigned char* buf, size_t len) {
+	size_t result = 0;
+	for (int i = 0; i < len; i++) {
+		result |= buf[i] << (8 * i);
+	}
+	return result;
 }
