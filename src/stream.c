@@ -160,7 +160,6 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 	char namespace[1024];
 	ssize_t len;
 	ssize_t olen;
-	ssize_t chunksize = INPUT_BUFSIZ;
 	int samples;
 	int rc;
 	int do_sleep;
@@ -213,7 +212,7 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 		len = samples = 0;
 		/* fetch input buffer */
 		if (source->read) {
-			len = source->read(source, ibuf, chunksize);
+			len = source->read(source, ibuf, sizeof(ibuf));
 #ifdef HAVE_LIBLAME
 			if (decode) {
 				samples = ices_reencode_decode(ibuf, len, sizeof(left), left, right);
@@ -248,9 +247,6 @@ static int stream_send(ices_config_t* config, input_stream_t* source) {
 				samples = plugin->process(samples, left, right);
 #endif
 
-		if (source->stdinctrl && ((source->filesize - source->bytes_read) < INPUT_BUFSIZ)) {
-			
-		}
 
 		if (len == 0) {
 			ices_log_debug("Done sending");
