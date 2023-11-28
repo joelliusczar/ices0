@@ -207,9 +207,9 @@ int ices_setup_output_redirects(void) {
 	}
 	int res2 = dup2(pno, fileno(stderr));
 	if(res2 == -1) {
-		pclose(pipe);
 		//revert standard out
 		freopen("/dev/tty","w",stdout);
+		pclose(pipe);
 		ices_log("can't redirect stderr to pipe");
 	}
 	ices_log_close_logfile();

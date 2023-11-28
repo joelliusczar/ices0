@@ -128,6 +128,8 @@ void ices_setup_shutdown(int exitCode) {
 
 	shout_shutdown();
 
+	ices_log("Final good bye!");
+
 	/* Down and down we go... */
 	exit(exitCode);
 }

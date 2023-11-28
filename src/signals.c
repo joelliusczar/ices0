@@ -81,7 +81,7 @@ void ices_signals_setup(void) {
 static RETSIGTYPE signals_child(const int sig) {
 	int stat;
 	ices_log_debug("Taking care of the dead process");
-	while (waitpid (WAIT_ANY, &stat, WNOHANG) <= 0);
+	while (waitpid (WAIT_ANY, &stat, WNOHANG) >= 0);
 }
 
 /* SIGINT, ok, let's be nice and just drop dead */
