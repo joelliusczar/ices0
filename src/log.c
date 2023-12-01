@@ -192,6 +192,11 @@ int ices_setup_output_redirects(void) {
 	}
 	//protect against injections
 	ices_util_scrub_string(namespace, LOG_FILENAME_LEN, "'&|;", 4);
+	
+	//stdout gets defaulted to block buffering when piped.
+	//causes things to print out of order or too late
+	setvbuf(stdout, NULL, _IOLBF, 0);
+
 	//invoke the system command to send output to log file and terminal
 	sprintf(cmd, "tee -a '%s'", namespace);
 	FILE* pipe = popen(cmd, "w");
