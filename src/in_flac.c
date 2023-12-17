@@ -210,8 +210,10 @@ flac_read_cb(const FLAC__StreamDecoder* decoder, FLAC__byte buffer[],
                 }
                 if ((len = read(self->fd, buffer, *bytes)) > 0)
                         return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
-                if (!len)
+                if (!len) {
+                        *bytes = 0;
                         return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
+                }
                 ices_log_error("Error reading FLAC stream: %s", ices_util_strerror(errno, errbuf, sizeof(errbuf)));
                 return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
         }
