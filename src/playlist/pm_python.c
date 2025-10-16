@@ -53,7 +53,7 @@ static char* python_find_attr(PyObject* module, char* f1, char* f2);
 int ices_PyInt_Check(PyObject* pyObj);
 long ices_PyAsLong(PyObject* pyObj);
 int ices_PyString_Check(PyObject* pyObj);
-char* ices_PyAsString(PyObject* pyObj);
+const char* ices_PyAsString(PyObject* pyObj);
 
 /* Call python function to initialize the python script */
 int ices_playlist_python_initialize(playlist_module_t* pm) {
