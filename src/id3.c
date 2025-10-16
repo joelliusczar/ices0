@@ -240,7 +240,7 @@ ssize_t id3v2_read_frame(input_stream_t* source, id3v2_tag* tag) {
 	size_t len, len2;
 	ssize_t rlen;
 	char *buf, *obuf;
-	int decodedlen, datastart;
+	int decodedlen;
 
 	if (source->read(source, hdr, ID3V2_FRAME_LEN(tag)) != ID3V2_FRAME_LEN(tag)) {
 		ices_log("Error reading ID3v2 frame");
@@ -343,7 +343,6 @@ ssize_t id3v2_read_frame(input_stream_t* source, id3v2_tag* tag) {
 				tag->gain = id3v2_get_rva2_track_gain(obuf);
 		} else if (!strcmp (hdr, ID3V2_TXXX_TAG(tag))) {
 			obuf[decodedlen] = '\0';
-			datastart = strlen(obuf) + 1;
 			// ices_log_debug("ID3v2: TXXX frame found: %s=%s", obuf, obuf + datastart);
 			ices_log_debug("ID3v2: TXXX frame found: %s", obuf);
 			/* always set from TXXX even if already set from RVA2 (TXXX shall "win") */

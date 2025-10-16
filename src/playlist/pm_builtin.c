@@ -122,7 +122,7 @@ static void playlist_builtin_shutdown(void) {
 /* Shuffle the playlist by creating a box-unique "internal" playlist
  * and using that as the playlist */
 static void playlist_builtin_shuffle_playlist(void) {
-	char *newname, namespace[1024], buf[1024];
+	char namespace[1024], buf[1024];
 
 	FILE* new;
 
@@ -131,7 +131,7 @@ static void playlist_builtin_shuffle_playlist(void) {
 		return;
 	}
 
-	newname = ices_util_get_random_filename(buf, "playlist");
+	
 	snprintf(namespace, sizeof(namespace), "%s/%s",
 		 ices_config.base_directory, buf);
 	new = fopen(namespace, "w+");

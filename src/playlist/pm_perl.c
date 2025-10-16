@@ -1,6 +1,6 @@
 /* playlist_perl.c
  * - Interpreter functions for perl
- * Copyright (c) 2000 Chad Armstrong, Alexander Haväng
+ * Copyright (c) 2000 Chad Armstrong, Alexander Havï¿½ng
  * Copyright (c) 2001-2 Brendan Cully
  *
  * This program is free software; you can redistribute it and/or
@@ -126,7 +126,7 @@ static void playlist_perl_shutdown(void) {
 	return;
 }
 
-static void xs_init(void) {
+static void xs_init(struct interpreter *_) {
 	char *file = __FILE__;
 
 	newXS("DynaLoader::boot_DynaLoader", boot_DynaLoader, file);

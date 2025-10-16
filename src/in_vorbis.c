@@ -131,7 +131,7 @@ int ices_vorbis_open(input_stream_t* self, char* buf, size_t len) {
 	return 0;
 }
 
-static int ices_vorbis_readpcm(input_stream_t* self, size_t olen, int16_t* left,
+static ssize_t ices_vorbis_readpcm(input_stream_t* self, size_t olen, int16_t* left,
 			       int16_t* right) {
 	ices_vorbis_in_t* vorbis_data = (ices_vorbis_in_t*) self->data;
 	int link;

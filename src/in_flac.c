@@ -158,7 +158,7 @@ errDecoder:
         return -1;
 }
 
-static int
+static ssize_t
 ices_flac_readpcm (input_stream_t* self, size_t olen, int16_t* left,
                    int16_t* right)
 {

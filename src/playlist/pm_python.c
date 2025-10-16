@@ -287,7 +287,7 @@ int ices_PyString_Check(PyObject* pyObj) {
 	#endif	
 }
 
-char* ices_PyAsString(PyObject* pyObj) {
+const char* ices_PyAsString(PyObject* pyObj) {
 	#if PY_MAJOR_VERSION >= 3
 		return PyUnicode_AsUTF8(pyObj);
 	#else 

@@ -305,16 +305,9 @@ static int ices_log_close_logfile(void) {
 	return 1;
 }
 
-static int ices_log_close_pipe(void) {
-	if (ices_config.logfile)
-		pclose(ices_config.logfile);
-	ices_config.logfile = NULL;
-	return 1;
-}
-
 static int ices_get_logfile_name(char *filename, int len) {
 	if (!ices_config.base_directory ||
-		strlen(ices_config.base_directory) > 1016
+		strlen(ices_config.base_directory) > 1015
 	) {
 		ices_log_error("Base directory is invalid");
 		return 0;

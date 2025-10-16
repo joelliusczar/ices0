@@ -1,5 +1,5 @@
 /* pm_script.c
- * - playlist module for external scripts (á la IceS 2.0)
+ * - playlist module for external scripts (ï¿½ la IceS 2.0)
  * - based on playlist_script.c from IceS 2.0 by
  * Copyright (c) 2001 Michael Smith <msmith@labyrinth.net.au>
  *
@@ -116,11 +116,21 @@ static char *playlist_script_get_next(void) {
 
 	if (fgets(filename, STR_BUFFER, pipe) == NULL) {
 		temp = malloc(STR_BUFFER);
-		ices_log_error_output("Couldn't read filename from pipe to program \"%s\": %s", cmd, ices_util_strerror(errno, temp, STR_BUFFER));
+		ices_log_error_output(
+			"Couldn't read filename from pipe to program \"%s\": %s", 
+			cmd, 
+			ices_util_strerror(errno, temp, STR_BUFFER)
+		);
 		free(temp);
-		free(filename); filename = NULL;
-		free(metadata); metadata = NULL;
-		free(timelimit); timelimit = NULL;
+		free(filename); 
+		filename = NULL;
+		
+		free(metadata); 
+		metadata = NULL;
+		
+		free(timelimit); 
+		timelimit = NULL;
+		
 		fclose(pipe);
 		return NULL;
 	}
@@ -135,16 +145,24 @@ static char *playlist_script_get_next(void) {
 
 	if (fgets(timelimit, STR_BUFFER, pipe) == NULL) {
 		/* This is non-fatal, and in fact can be totally ignored. */
-		free(timelimit); timelimit = NULL;
+		free(timelimit); 
+		timelimit = NULL;
 	}
 
 	fclose(pipe);
 
 	if (filename[0] == '\n' || (filename[0] == '\r' && filename[1] == '\n')) {
 		ices_log_error_output("Got newlines instead of filename from program \"%s\"", cmd);
-		free(filename); filename = NULL;
-		if (metadata) free(metadata); metadata = NULL;
-		if (timelimit) free(timelimit); timelimit = NULL;
+		free(filename); 
+		filename = NULL;
+		if (metadata) {
+			free(metadata); 
+			metadata = NULL;
+		}
+		if (timelimit) {
+			free(timelimit);
+			timelimit = NULL;
+		}
 		return NULL;
 	}
 	
