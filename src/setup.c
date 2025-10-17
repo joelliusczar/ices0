@@ -495,7 +495,7 @@ static void ices_setup_activate_libshout_changes(const ices_config_t *ices_confi
 #ifdef USE_OLD_LIBSHOUT
 	shout_set_format(conn, SHOUT_FORMAT_MP3);
 #else
-	shout_set_content_format(conn, SHOUT_FORMAT_MP3, SHOUT_USAGE_AUDIO);
+	shout_set_content_format(conn, SHOUT_FORMAT_MP3, SHOUT_USAGE_AUDIO, NULL);
 #endif
 		if (stream->protocol == icy_protocol_e) {
 			shout_set_protocol(conn, SHOUT_PROTOCOL_ICY);

@@ -65,7 +65,7 @@ void ices_log_daemonize(void) {
 #ifdef REDIRECT_LOGGING
 	char namespace[LOG_FILENAME_LEN], buf[ERR_BUFF_LEN];
 
-	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN - 1) != 1) {
+	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN) != 1) {
 		return;
 	}
 	fflush(stdout);
@@ -187,7 +187,7 @@ int ices_setup_output_redirects(void) {
 	char namespace[LOG_FILENAME_LEN];
 	int cmdLen = 9;
 	char cmd[LOG_FILENAME_LEN + cmdLen];
-	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN - 1) != 1) {
+	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN) != 1) {
 		return 0;
 	}
 	//protect against injections
@@ -249,7 +249,7 @@ static int ices_log_open_logfile(void) {
 	char namespace[LOG_FILENAME_LEN], buf[ERR_BUFF_LEN];
 	FILE *logfp;
 
-	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN - 1) != 1) {
+	if(ices_get_logfile_name(namespace, LOG_FILENAME_LEN) != 1) {
 		return 0;
 	}
 
@@ -307,7 +307,7 @@ static int ices_log_close_logfile(void) {
 
 static int ices_get_logfile_name(char *filename, int len) {
 	if (!ices_config.base_directory ||
-		strlen(ices_config.base_directory) > 1015
+		strlen(ices_config.base_directory) > 1014
 	) {
 		ices_log_error("Base directory is invalid");
 		return 0;

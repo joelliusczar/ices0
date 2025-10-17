@@ -82,21 +82,23 @@ static void scramble(FILE *fp, FILE *out) {
 	 * So I removed the check since it was causing a compiler warning down below
 	 * with ptr = llist->next
 	 *  ***/
-	if (method == LINE) {
-		while (fgets(line_storage, 1024, fp)) {
-			/* skip lines beginning with '#' (for M3U files) */
-			if (line_storage[0] == '#')
-				continue;
-			struct ll *x = malloc(sizeof(struct ll));
-			x->data = malloc(strlen(line_storage) * sizeof(char) + 2);
-			memcpy(x->data, line_storage, strlen(line_storage) * sizeof(char) + 1);
-			x->data[strlen(x->data) - 1] = 0;
-			x->next = NULL;
-			ptr->next = x;
-			ptr = x;
-			size++;
-		}
+	while (fgets(line_storage, 1024, fp)) {
+		/* skip lines beginning with '#' (for M3U files) */
+		if (line_storage[0] == '#')
+			continue;
+		struct ll *x = malloc(sizeof(struct ll));
+		x->data = malloc(strlen(line_storage) * sizeof(char) + 2);
+		memcpy(x->data, line_storage, strlen(line_storage) * sizeof(char) + 1);
+		x->data[strlen(x->data) - 1] = 0;
+		x->next = NULL;
+		ptr->next = x;
+		ptr = x;
+		size++;
 	}
+
+	if (!llist->next) {
+		goto CLEANUP_AND_EXIT;
+	};
 
 	/*** make table from list ***/
 	table = malloc(size * sizeof(void *));
@@ -123,6 +125,7 @@ static void scramble(FILE *fp, FILE *out) {
 		size--;
 	}
 
+CLEANUP_AND_EXIT:
 	/*** delete the linked list and clean up ***/
 	ptr = llist->next;
 	while (ptr) {
