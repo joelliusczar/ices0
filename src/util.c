@@ -121,7 +121,7 @@ char *ices_util_read_line(FILE *fp) {
 		if (!fgets(temp, 1024, fp)) {
 
 			if (!feof(fp)) {
-				ices_log_error("Got error while reading file, error: [%s]", ices_util_strerror(errno, temp, 1024));
+				ices_log_error("Got error while reading file, error: [%s]", ices_util_strerror(errno, temp, 1023));
 				return NULL;
 			}
 		}

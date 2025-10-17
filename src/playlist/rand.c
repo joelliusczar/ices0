@@ -76,7 +76,12 @@ static void scramble(FILE *fp, FILE *out) {
 
 	line_storage = (char *) malloc(sizeof(char) * 1024 + 2);
 
-	/*** make linked list     ***/
+	/*** make linked list    
+	 * This while block used to be restricted to method == LINE
+	 * but any plans for alternatives seem to have been abandoned.
+	 * So I removed the check since it was causing a compiler warning down below
+	 * with ptr = llist->next
+	 *  ***/
 	if (method == LINE) {
 		while (fgets(line_storage, 1024, fp)) {
 			/* skip lines beginning with '#' (for M3U files) */

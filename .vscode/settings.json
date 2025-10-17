@@ -1,5 +1,7 @@
 {
 	"files.associations": {
-		"lame.h": "c"
+		"lame.h": "c",
+		"definitions.h": "c",
+		"shout.h": "c"
 	}
 }

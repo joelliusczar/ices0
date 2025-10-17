@@ -28,8 +28,11 @@ static char* Title = NULL;
 static char* Filename = NULL;
 
 /* Private function declarations */
-static char* metadata_clean_filename(const char* path, char* buf,
-				     size_t len);
+static char* metadata_clean_filename(
+	const char* path, 
+	char* buf,
+	size_t len
+);
 static void metadata_update(int delay);
 
 /* Global function definitions */
@@ -60,7 +63,7 @@ void ices_metadata_set_file(const char* filename) {
 	Filename = NULL;
 
 	if (filename && *filename) {
-		metadata_clean_filename(filename, buf, sizeof(buf));
+		metadata_clean_filename(filename, buf, sizeof(buf) - 1);
 		Filename = ices_util_strdup(buf);
 	}
 }
@@ -122,7 +125,11 @@ static void metadata_update(int delay) {
 	}
 
 	for (stream = ices_config.streams; stream; stream = stream->next) {
+#ifdef USE_OLD_LIBSHOUT
 		rc = shout_set_metadata(stream->conn, metadata);
+#else
+		rc = shout_set_metadata_utf8(stream->conn, metadata);
+#endif
 
 		if (rc != SHOUTERR_SUCCESS)
 			ices_log_error_output("Updating metadata on %s failed.", stream->mount);
