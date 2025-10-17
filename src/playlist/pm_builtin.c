@@ -122,29 +122,33 @@ static void playlist_builtin_shutdown(void) {
 /* Shuffle the playlist by creating a box-unique "internal" playlist
  * and using that as the playlist */
 static void playlist_builtin_shuffle_playlist(void) {
-	char namespace[1024], buf[1024];
+	char namespace[1024];
 
-	FILE* new;
+	FILE* new_fp;
 
 	if (!ices_config.base_directory) {
 		ices_log_error("Base directory is invalid");
 		return;
 	}
 
-	
-	snprintf(namespace, sizeof(namespace), "%s/%s",
-		 ices_config.base_directory, buf);
-	new = fopen(namespace, "w+");
-	if (!new) {
+	snprintf(
+		namespace,
+		sizeof(namespace),
+		"%s/playlist_shuffle_%d.tmp",
+		ices_config.base_directory,
+		(int)getpid()
+	);
+	new_fp = fopen(namespace, "w+");
+	if (!new_fp) {
 		ices_log("Error writing randomized playlist file: %s", namespace);
 		return;
 	}
 	unlink(namespace);
 
-	rand_file(fp, new);
+	rand_file(fp, new_fp);
 	ices_util_fclose(fp);
 
-	fp = new;
+	fp = new_fp;
 	lineno = 0;
 	rewind(fp);
 }
@@ -169,8 +173,9 @@ static int playlist_builtin_open_playlist(playlist_module_t* pm) {
 
 	fp = tmpfp;
 
-	if (stat(pm->playlist_file, &st) == 0)
+	if (stat(pm->playlist_file, &st) == 0) {
 		playlist_modtime = st.st_mtime;
+	}
 
 	if (pm->randomize) {
 		ices_log_debug("Randomizing playlist");
