@@ -106,6 +106,7 @@ typedef struct _input_stream_t {
 	ssize_t (*readpcm)(struct _input_stream_t* self, size_t len, int16_t* left,
 			   int16_t* right);
 	int (*close)(struct _input_stream_t* self);
+	void* codecStruct;
 } input_stream_t;
 
 typedef struct _ices_plugin {

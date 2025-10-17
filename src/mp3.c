@@ -1,6 +1,6 @@
 /* mp3.c
  * - Functions for mp3 in ices
- * Copyright (c) 2000 Alexander Haväng
+ * Copyright (c) 2000 Alexander Havï¿½ng
  * Copyright (c) 2001-3 Brendan Cully
  *
  * This program is free software; you can redistribute it and/or
@@ -288,7 +288,7 @@ static ssize_t ices_mp3_readpcm(input_stream_t* self, size_t len, int16_t* left,
 		if ((rlen = self->read(self, buf, sizeof(buf))) <= 0)
 			return rlen;
 
-		nsamples = ices_reencode_decode(buf, rlen, len, left, right);
+		nsamples = ices_reencode_decode(self, buf, rlen, len, left, right);
 	}
 
 	return nsamples;

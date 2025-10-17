@@ -56,33 +56,48 @@ void ices_reencode_reset(input_stream_t* source) {
 	lame_global_flags* lame;
 	static int init_decoder = 1;
 
-#ifdef HAVE_LAME_DECODE_EXIT
 	if (!init_decoder) {
+
+#if defined(DEPRECATED_OR_OBSOLETE_CODE_REMOVED) && DEPRECATED_OR_OBSOLETE_CODE_REMOVED == 1
+		if(!source->codecStruct || hip_decode_exit((hip_t)source->codecStruct) < 0) {
+			ices_log("LAME: error shutting down decoder");
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
+		}
+		source->codecStruct = NULL;
+#elif defined(HAVE_LAME_DECODE_EXIT)
 		if (lame_decode_exit() < 0) {
 			ices_log("LAME: error shutting down decoder");
 			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
+#endif
 		init_decoder = 1;
 	}
-#endif
+
 
 	if (init_decoder) {
+#if defined(DEPRECATED_OR_OBSOLETE_CODE_REMOVED) && DEPRECATED_OR_OBSOLETE_CODE_REMOVED == 1
+		if ((source->codecStruct = hip_decode_init()) == NULL) {
+			ices_log("LAME: error initialising decoder");
+			ices_setup_shutdown(ICES_EXIT_FAILURE);
+		}
+#else
 		if (lame_decode_init() < 0) {
 			ices_log("LAME: error initialising decoder");
 			ices_setup_shutdown(ICES_EXIT_FAILURE);
 		}
+#endif
 		init_decoder = 0;
 	}
 
 	for (stream = ices_config.streams; stream; stream = stream->next) {
-		if (!stream->reencode)
-			continue;
+		if (!stream->reencode) continue;
 
 		/* only reset encoder if audio format changes */
 		lame = (lame_global_flags*) stream->encoder_state;
 		if (lame) {
-			if (lame_get_in_samplerate(lame) == source->samplerate)
+			if (lame_get_in_samplerate(lame) == source->samplerate) {
 				continue;
+			}
 
 			lame_close(lame);
 		}
@@ -134,9 +149,19 @@ void ices_reencode_shutdown(void) {
 /* decode buffer, of length buflen, into left and right. Stream-independent
  * (do this once per chunk, not per stream). Result is number of samples
  * for ices_reencode_reencode_chunk. */
-int ices_reencode_decode(unsigned char* buf, size_t blen, size_t olen,
-			 int16_t* left, int16_t* right) {
+int ices_reencode_decode(
+	input_stream_t* source,
+	unsigned char* buf,
+	size_t blen,
+	size_t olen,
+	int16_t* left,
+	int16_t* right
+) {
+#if defined(DEPRECATED_OR_OBSOLETE_CODE_REMOVED) && DEPRECATED_OR_OBSOLETE_CODE_REMOVED == 1
+	return hip_decode((hip_t)source->codecStruct, buf, blen, left, right);
+#else
 	return lame_decode(buf, blen, left, right);
+#endif
 }
 
 /* reencode buff, of len buflen, put max outlen reencoded bytes in outbuf */

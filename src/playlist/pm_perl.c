@@ -56,7 +56,7 @@ static void pl_perl_shutdown_perl(void);
 static char* pl_perl_eval(const char* func);
 static const char* pl_find_func(const char*);
 
-static void xs_init(void);
+static void xs_init(struct interpreter *);
 
 int ices_playlist_perl_initialize(playlist_module_t* pm) {
 	char *str;
