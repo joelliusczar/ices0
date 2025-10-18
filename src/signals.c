@@ -37,10 +37,10 @@
 #endif
 
 /* Private function declarations */
-static RETSIGTYPE signals_child(const int sig);
-static RETSIGTYPE signals_int(const int sig);
-static RETSIGTYPE signals_hup(const int sig);
-static RETSIGTYPE signals_usr1(const int sig);
+static void signals_child(const int sig);
+static void signals_int(const int sig);
+static void signals_hup(const int sig);
+static void signals_usr1(const int sig);
 
 /* Global function definitions */
 
@@ -78,26 +78,26 @@ void ices_signals_setup(void) {
 }
 
 /* Guess we fork()ed, let's take care of the dead process */
-static RETSIGTYPE signals_child(const int sig) {
+static void signals_child(const int sig) {
 	ices_log_debug("Taking care of the dead process");
 	while ((waitpid (WAIT_ANY, NULL, WNOHANG)) > 0);
 }
 
 /* SIGINT, ok, let's be nice and just drop dead */
-static RETSIGTYPE signals_int(const int sig) {
+static void signals_int(const int sig) {
 	ices_log_debug("Caught signal, shutting down...");
 	ices_setup_shutdown(EXIT_SUCCESS);
 }
 
 /* SIGHUP caught, let's cycle logfiles and try to reload the playlist module */
-static RETSIGTYPE signals_hup(const int sig) {
+static void signals_hup(const int sig) {
 	ices_log_debug("Caught SIGHUP, cycling logfiles and reloading playlist...");
 	ices_log_reopen_logfile();
 	ices_playlist_reload();
 }
 
 /* I'm not sure whether I'll keep this... */
-static RETSIGTYPE signals_usr1(const int sig) {
+static void signals_usr1(const int sig) {
 	ices_log_debug("Caught SIGUSR1, skipping to next track...");
 	ices_stream_next();
 #endif
